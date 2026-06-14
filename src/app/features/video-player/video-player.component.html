@@ -1,0 +1,56 @@
+<section class="player">
+  <a class="back" routerLink="/">← Back to videos</a>
+
+  @switch (status()) {
+    @case ('loading') {
+      <div class="state" role="status">
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Loading video…</p>
+      </div>
+    }
+    @case ('error') {
+      <div class="state state--error" role="alert">
+        <p>Sorry, this video could not be loaded.</p>
+        <a class="btn" routerLink="/">Back to videos</a>
+      </div>
+    }
+    @case ('ready') {
+      @if (selectedFile(); as file) {
+        <div class="stage">
+          <video
+            class="stage__video"
+            [src]="file.link"
+            [poster]="video()?.image"
+            controls
+            autoplay
+            preload="metadata"
+          ></video>
+        </div>
+      }
+
+      <div class="info">
+        <div class="info__meta">
+          <h1 class="info__title">{{ video()?.url | videoTitle }}</h1>
+          <span class="info__author">by {{ video()?.user?.name }}</span>
+        </div>
+
+        @if (qualities().length > 1) {
+          <div class="quality">
+            <label class="quality__label" for="quality-select">Quality</label>
+            <select
+              id="quality-select"
+              class="quality__select"
+              aria-label="Select video quality"
+              [value]="selectedFile()?.id"
+              (change)="onQualityChange($any($event.target).value)"
+            >
+              @for (q of qualities(); track q.id) {
+                <option [value]="q.id">{{ q.height }}p · {{ q.fps }}fps ({{ q.quality }})</option>
+              }
+            </select>
+          </div>
+        }
+      </div>
+    }
+  }
+</section>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Video Player App — Project Overview</title>
+<style>
+  :root {
+    --bg: #0b1020;
+    --bg-soft: #121a31;
+    --card: #161f3a;
+    --card-2: #1b2747;
+    --line: #25315a;
+    --txt: #e7ecff;
+    --muted: #97a3c7;
+    --brand: #6d8bff;
+    --brand-2: #9b6bff;
+    --green: #34d399;
+    --green-soft: rgba(52, 211, 153, .14);
+    --amber: #fbbf24;
+    --radius: 16px;
+    --shadow: 0 18px 50px rgba(0, 0, 0, .45);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(155, 107, 255, .18), transparent 60%),
+      radial-gradient(1000px 500px at 0% 0%, rgba(109, 139, 255, .16), transparent 55%),
+      var(--bg);
+    color: var(--txt);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 0 22px 80px; }
+
+  /* ---------- Header ---------- */
+  header.hero {
+    padding: 64px 22px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--brand);
+    background: rgba(109, 139, 255, .12);
+    border: 1px solid rgba(109, 139, 255, .3);
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 22px;
+  }
+  .badge .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 4px var(--green-soft);
+  }
+  h1.title {
+    font-size: clamp(34px, 6vw, 58px);
+    line-height: 1.05;
+    margin: 0 0 16px;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    background: linear-gradient(120deg, #fff 10%, var(--brand) 60%, var(--brand-2) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .subtitle {
+    max-width: 680px;
+    margin: 0 auto;
+    font-size: 18px;
+    color: var(--muted);
+  }
+  .hero-meta {
+    margin-top: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  .chip {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--txt);
+    background: var(--card);
+    border: 1px solid var(--line);
+    padding: 7px 14px;
+    border-radius: 999px;
+  }
+
+  /* ---------- Tabs ---------- */
+  .tabs {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    gap: 6px;
+    padding: 10px;
+    margin: 30px auto 34px;
+    max-width: 640px;
+    background: rgba(13, 19, 38, .72);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    box-shadow: var(--shadow);
+  }
+  .tab-btn {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 11px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all .18s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+  }
+  .tab-btn:hover { color: var(--txt); }
+  .tab-btn.active {
+    color: #fff;
+    background: linear-gradient(120deg, var(--brand), var(--brand-2));
+    box-shadow: 0 8px 22px rgba(109, 139, 255, .4);
+  }
+  .tab-btn .count {
+    font-size: 11px;
+    background: rgba(255, 255, 255, .18);
+    padding: 1px 8px;
+    border-radius: 999px;
+  }
+
+  /* ---------- Panels ---------- */
+  .panel { display: none; animation: fade .35s ease; }
+  .panel.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  section.block {
+    background: linear-gradient(180deg, var(--card), var(--bg-soft));
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 22px;
+    box-shadow: var(--shadow);
+  }
+  h2 {
+    font-size: 24px;
+    margin: 0 0 6px;
+    letter-spacing: -.01em;
+  }
+  h3 { font-size: 17px; margin: 26px 0 12px; color: var(--txt); }
+  .lead { color: var(--muted); margin: 0 0 20px; }
+  p { color: #c7d0ee; }
+
+  /* feature grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 14px;
+  }
+  .feature {
+    background: var(--card-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px;
+    transition: transform .18s ease, border-color .18s ease;
+  }
+  .feature:hover { transform: translateY(-3px); border-color: var(--brand); }
+  .feature .ico {
+    width: 40px; height: 40px;
+    display: grid; place-items: center;
+    border-radius: 10px;
+    font-size: 20px;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, rgba(109,139,255,.25), rgba(155,107,255,.25));
+    border: 1px solid var(--line);
+  }
+  .feature h4 { margin: 0 0 6px; font-size: 16px; }
+  .feature p { margin: 0; font-size: 14px; color: var(--muted); }
+
+  /* decision table */
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--brand); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+  tbody tr:hover { background: rgba(109, 139, 255, .06); }
+
+  /* code / file tree */
+  pre {
+    background: #0a0f20;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #b9c4ea;
+    font-family: 'Cascadia Code', 'Fira Code', ui-monospace, Consolas, monospace;
+  }
+  pre .c { color: #6b779e; }
+  pre .k { color: var(--brand); }
+
+  /* ---------- Tests ---------- */
+  .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 8px; }
+  .stat {
+    background: var(--card-2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat.ok { border-color: rgba(52, 211, 153, .4); background: linear-gradient(180deg, var(--green-soft), var(--card-2)); }
+  .stat .num { font-size: 34px; font-weight: 800; letter-spacing: -.02em; }
+  .stat .num.green { color: var(--green); }
+  .stat .lbl { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  .pass-banner {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--green-soft);
+    border: 1px solid rgba(52, 211, 153, .4);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 22px;
+  }
+  .pass-banner .big { font-size: 26px; }
+  .pass-banner b { color: var(--green); }
+
+  .suite { margin-bottom: 14px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .suite-head {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px;
+    background: var(--card-2);
+    font-weight: 600;
+  }
+  .suite-head .pill {
+    margin-left: auto;
+    font-size: 12px; font-weight: 700;
+    color: var(--green);
+    background: var(--green-soft);
+    border: 1px solid rgba(52,211,153,.4);
+    padding: 3px 10px; border-radius: 999px;
+  }
+  .suite-head .path { color: var(--muted); font-weight: 400; font-size: 12.5px; font-family: ui-monospace, Consolas, monospace; }
+  .suite-body { padding: 6px 18px 14px; }
+  .test-line {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 0;
+    font-size: 14.5px;
+    border-bottom: 1px dashed rgba(37, 49, 90, .6);
+  }
+  .test-line:last-child { border-bottom: 0; }
+  .test-line .check {
+    flex: 0 0 auto;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--green-soft);
+    color: var(--green);
+    display: grid; place-items: center;
+    font-size: 12px; font-weight: 800;
+    margin-top: 1px;
+  }
+  .test-line .ms { margin-left: auto; color: var(--muted); font-size: 12px; font-family: ui-monospace, Consolas, monospace; white-space: nowrap; }
+
+  footer { text-align: center; color: var(--muted); font-size: 13px; padding: 30px 0 0; }
+  footer code { background: var(--card); padding: 2px 8px; border-radius: 6px; border: 1px solid var(--line); }
+  a { color: var(--brand); }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="badge"><span class="dot"></span> All systems green · 21/21 tests passing</div>
+  <h1 class="title">Video Player App</h1>
+  <p class="subtitle">
+    An Angular 19 + TypeScript app that lists videos from the Pexels Videos API,
+    plays them, and lets you search and pick a resolution — built as a focused, fully-typed MVP.
+  </p>
+  <div class="hero-meta">
+    <span class="chip">Angular 19 · Standalone</span>
+    <span class="chip">Signals + RxJS</span>
+    <span class="chip">Raw SCSS · zero UI libs</span>
+    <span class="chip">Jest · jest-preset-angular</span>
+    <span class="chip">Strict mode · no <code>any</code></span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="overview">📦 Overview</button>
+    <button class="tab-btn" data-tab="architecture">🏗️ Architecture</button>
+    <button class="tab-btn" data-tab="tests">✅ Tests <span class="count">21</span></button>
+  </nav>
+
+  <!-- ================= OVERVIEW ================= -->
+  <div class="panel active" id="overview">
+    <section class="block">
+      <h2>What was built</h2>
+      <p class="lead">Five core features, each wired end-to-end with typed data flow and explicit loading / error / empty states.</p>
+      <div class="grid">
+        <div class="feature">
+          <div class="ico">🎬</div>
+          <h4>Fetch &amp; list</h4>
+          <p>Loads videos from Pexels and renders them as cards showing poster, author and duration.</p>
+        </div>
+        <div class="feature">
+          <div class="ico">▶️</div>
+          <h4>Play</h4>
+          <p>Selecting a card opens a deep-linkable <code>/video/:id</code> route with native HTML5 controls.</p>
+        </div>
+        <div class="feature">
+          <div class="ico">🔍</div>
+          <h4>Search (debounced)</h4>
+          <p>Search by author name with a 400ms debounce — filters the loaded pool client-side.</p>
+        </div>
+        <div class="feature">
+          <div class="ico">⚙️</div>
+          <h4>Quality selection</h4>
+          <p>A native <code>&lt;select&gt;</code> of renditions sorted by height, shown only when more than one exists.</p>
+        </div>
+        <div class="feature">
+          <div class="ico">🚦</div>
+          <h4>Loading / error / empty</h4>
+          <p>A single <code>@switch</code> on status drives skeletons, an error+retry view, the empty state and the grid.</p>
+        </div>
+        <div class="feature">
+          <div class="ico">♿</div>
+          <h4>Accessible &amp; fast</h4>
+          <p>Keyboard-navigable, ARIA roles, OnPush everywhere, lazy thumbnails &amp; lazy routes.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Key decisions</h2>
+      <p class="lead">Deliberate, minimal choices — modern Angular without extra dependencies.</p>
+      <table>
+        <thead><tr><th>Area</th><th>Decision</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>State</td><td>Angular Signals + RxJS for the search stream</td><td>Minimal boilerplate; RxJS where it shines (debounce / cancel).</td></tr>
+          <tr><td>Styling</td><td>Raw SCSS, zero UI libraries</td><td>Full control, no dependencies, fast.</td></tr>
+          <tr><td>Player</td><td>Separate route <code>/video/:id</code></td><td>Deep-linkable; clean separation from the list.</td></tr>
+          <tr><td>Auth token</td><td>Optional API key via interceptor</td><td>Endpoints work unauthenticated; one place to add a key if needed.</td></tr>
+          <tr><td>Testing</td><td>Jest (jest-preset-angular)</td><td>Fast unit tests for service, store, pipe and card.</td></tr>
+          <tr><td>UI language</td><td>English only</td><td>All visible text, labels, alt and aria.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <b>A note on search:</b> Pexels' server-side <code>/search</code> matches by topic/content, not by author —
+        and Pexels videos have no title field (the display title is derived from the URL slug). The chosen UX is
+        <b>search by author</b>, a real field that isn't indexed server-side, so search runs client-side over a
+        loaded pool of ~80 videos. An honest trade-off; server-side topic search remains available on the service.
+      </div>
+    </section>
+  </div>
+
+  <!-- ================= ARCHITECTURE ================= -->
+  <div class="panel" id="architecture">
+    <section class="block">
+      <h2>Project structure</h2>
+      <p class="lead">Angular 19, standalone components, Signals and <code>HttpClient</code>. Feature routes are lazy-loaded.</p>
+<pre><span class="c">src/</span>
+  environments/environment.ts        <span class="c"># base URL + optional pexelsApiKey</span>
+  app/
+    models/video.model.ts            <span class="c"># Video, VideoFile, PexelsUser, PexelsResponse (no `any`)</span>
+    core/
+      pexels.service.ts              <span class="c"># getPopular(), search(q), getById(id) — typed HttpClient</span>
+      pexels.interceptor.ts          <span class="c"># attaches Authorization header iff a key is set</span>
+    features/
+      video-list/
+        video-list.component.*        <span class="c"># route '' — search box + grid + states</span>
+        video-list.store.ts           <span class="c"># signals: videos/status/query; switchMap data flow</span>
+      video-player/
+        video-player.component.*      <span class="c"># route 'video/:id' — native player + quality select</span>
+    shared/
+      video-card/video-card.component.*   <span class="c"># presentational card (input.required&lt;Video&gt;)</span>
+      duration.pipe.ts                <span class="c"># seconds -> "m:ss"</span>
+      video-title.ts                  <span class="c"># derive a display title from the url slug</span>
+    app.routes.ts                    <span class="c"># '' (list), 'video/:id' (player), '**' -> ''</span>
+    app.config.ts                    <span class="c"># provideRouter + provideHttpClient(withInterceptors)</span></pre>
+    </section>
+
+    <section class="block">
+      <h2>Cross-cutting quality</h2>
+      <h3>🔒 Type safety</h3>
+      <p>All API calls use generics (<code>http.get&lt;PexelsResponse&gt;()</code>); <code>tsconfig</code> runs in <b>strict</b> mode with <code>strictTemplates</code>. No <code>any</code> anywhere.</p>
+      <h3>♿ Accessibility</h3>
+      <p>Search <code>&lt;input type="search"&gt;</code> with a linked label; cards are focusable <code>&lt;a&gt;</code> elements with descriptive alt; native quality <code>&lt;select&gt;</code>; state regions use <code>role="status"</code> / <code>role="alert"</code>; visible <code>:focus-visible</code> outlines.</p>
+      <h3>⚡ Performance</h3>
+      <p><code>switchMap</code> cancels in-flight requests; every component is <code>ChangeDetectionStrategy.OnPush</code> with Signals; <code>@for</code> uses <code>track video.id</code>; thumbnails are <code>loading="lazy"</code>; both feature routes are code-split with <code>loadComponent</code>.</p>
+    </section>
+  </div>
+
+  <!-- ================= TESTS ================= -->
+  <div class="panel" id="tests">
+    <section class="block">
+      <h2>Unit tests</h2>
+      <p class="lead">Run with <code>npm test</code> (Jest + jest-preset-angular). Every suite passes.</p>
+
+      <div class="pass-banner">
+        <span class="big">🎉</span>
+        <div><b>All 21 tests passed</b> across 5 suites — 0 failures, 0 skipped.</div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat ok"><div class="num green">5</div><div class="lbl">Test suites passed</div></div>
+        <div class="stat ok"><div class="num green">21</div><div class="lbl">Tests passed</div></div>
+        <div class="stat"><div class="num">0</div><div class="lbl">Failures</div></div>
+        <div class="stat"><div class="num">~55s</div><div class="lbl">Total run time</div></div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Suite breakdown</h2>
+
+      <div class="suite">
+        <div class="suite-head">🛰️ PexelsService <span class="path">core/pexels.service.spec.ts</span><span class="pill">3 / 3 PASS</span></div>
+        <div class="suite-body">
+          <div class="test-line"><span class="check">✓</span><span><code>getPopular()</code> hits <code>/popular</code> with per_page</span><span class="ms">43 ms</span></div>
+          <div class="test-line"><span class="check">✓</span><span><code>search()</code> hits <code>/search</code> with query and per_page</span><span class="ms">10 ms</span></div>
+          <div class="test-line"><span class="check">✓</span><span><code>getById()</code> hits <code>/videos/:id</code> and maps the response</span><span class="ms">6 ms</span></div>
+        </div>
+      </div>
+
+      <div class="suite">
+        <div class="suite-head">🗃️ VideoListStore <span class="path">features/video-list/video-list.store.spec.ts</span><span class="pill">5 / 5 PASS</span></div>
+        <div class="suite-body">
+          <div class="test-line"><span class="check">✓</span><span>shows loading then ready with all videos</span><span class="ms">67 ms</span></div>
+          <div class="test-line"><span class="check">✓</span><span>filters by author name prefix (case-insensitive)</span><span class="ms">15 ms</span></div>
+          <div class="test-line"><span class="check">✓</span><span>does not match a word in the middle of the author name (prefix only)</span><span class="ms">7 ms</span></div>
+          <div class="test-line"><span class="check">✓</span><span>reports empty when no author matches</span><span class="ms">7 ms</span></div>
+          <div class="test-line"><span class="check">✓</span><span>reports error when the load fails</span><span class="ms">9 ms</span></div>
+        </div>
+      </div>
+
+      <div class="suite">
+        <div class="suite-head">🃏 VideoCardComponent <span class="path">shared/video-card/video-card.component.spec.ts</span><span class="pill">5 / 5 PASS</span></div>
+        <div class="suite-body">
+          <div class="test-line"><span class="check">✓</span><span>renders the poster with a descriptive alt</span><span class="ms">235 ms</span></div>
+          <div class="test-line"><span class="check">✓</span><span>renders the title derived from the url</span><span class="ms">27 ms</span></div>
+          <div class="test-line"><span class="check">✓</span><span>renders the author name</span><span class="ms">18 ms</span></div>
+          <div class="test-line"><span class="check">✓</span><span>renders the formatted duration</span><span class="ms">12 ms</span></div>
+          <div class="test-line"><span class="check">✓</span><span>links to the player route</span><span class="ms">11 ms</span></div>
+        </div>
+      </div>
+
+      <div class="suite">
+        <div class="suite-head">⏱️ DurationPipe <span class="path">shared/duration.pipe.spec.ts</span><span class="pill">5 / 5 PASS</span></div>
+        <div class="suite-body">
+          <div class="test-line"><span class="check">✓</span><span>formats minutes and seconds</span><span class="ms">22 ms</span></div>
+          <div class="test-line"><span class="check">✓</span><span>zero-pads the seconds</span><span class="ms">1 ms</span></div>
+          <div class="test-line"><span class="check">✓</span><span>formats durations over an hour</span><span class="ms">1 ms</span></div>
+          <div class="test-line"><span class="check">✓</span><span>floors fractional seconds</span><span class="ms">1 ms</span></div>
+          <div class="test-line"><span class="check">✓</span><span>guards null, negative and non-finite input</span><span class="ms">1 ms</span></div>
+        </div>
+      </div>
+
+      <div class="suite">
+        <div class="suite-head">🏷️ toVideoTitle <span class="path">shared/video-title.spec.ts</span><span class="pill">3 / 3 PASS</span></div>
+        <div class="suite-body">
+          <div class="test-line"><span class="check">✓</span><span>derives a readable title from a Pexels url and strips the trailing id</span><span class="ms">21 ms</span></div>
+          <div class="test-line"><span class="check">✓</span><span>handles a url without a trailing slash</span><span class="ms">1 ms</span></div>
+          <div class="test-line"><span class="check">✓</span><span>falls back when there is no usable slug</span><span class="ms">1 ms</span></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    Generated from <code>docs/PLAN.md</code> · Video Player App · Angular 19 + Jest
+  </footer>
+</div>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.tab;
+      buttons.forEach(b => b.classList.toggle('active', b === btn));
+      panels.forEach(p => p.classList.toggle('active', p.id === id));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>

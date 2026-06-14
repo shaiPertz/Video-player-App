@@ -1,0 +1,54 @@
+<section class="list">
+  <div class="search">
+    <label class="search__label" for="video-search">Search videos</label>
+    <input
+      id="video-search"
+      class="search__input"
+      type="search"
+      [formControl]="searchControl"
+      placeholder="Search by keyword (e.g. ocean, city, dog)…"
+      aria-label="Search videos by keyword"
+      autocomplete="off"
+    />
+  </div>
+
+  @switch (status()) {
+    @case ('loading') {
+      <div class="grid" aria-hidden="true">
+        @for (i of [1, 2, 3, 4, 5, 6, 7, 8]; track i) {
+          <div class="skeleton"></div>
+        }
+      </div>
+      <p class="visually-hidden" role="status">Loading videos…</p>
+    }
+    @case ('error') {
+      <div class="state state--error" role="alert">
+        <p>Something went wrong while loading videos.</p>
+        <button type="button" class="btn" (click)="retry()">Retry</button>
+      </div>
+    }
+    @case ('empty') {
+      <div class="state" role="status">
+        <p>No videos found. Try a different keyword.</p>
+      </div>
+    }
+    @case ('ready') {
+      <div class="grid">
+        @for (video of videos(); track video.id) {
+          <app-video-card [video]="video" />
+        }
+      </div>
+
+      @if (loadingMore()) {
+        <div class="load-more" role="status">
+          <div class="spinner" aria-hidden="true"></div>
+          <span>Loading more…</span>
+        </div>
+      }
+
+      @if (hasMore() && !loadingMore()) {
+        <div #sentinel class="sentinel" aria-hidden="true"></div>
+      }
+    }
+  }
+</section>

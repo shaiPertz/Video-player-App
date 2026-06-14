@@ -1,0 +1,16 @@
+<a class="card" [routerLink]="['/video', video().id]">
+  <div class="thumb">
+    <img
+      class="thumb__img"
+      [src]="video().image"
+      [alt]="video().user.name + ' — video thumbnail'"
+      loading="lazy"
+      decoding="async"
+    />
+    <span class="thumb__duration">{{ video().duration | duration }}</span>
+  </div>
+  <div class="meta">
+    <span class="meta__title" [title]="video().url | videoTitle">{{ video().url | videoTitle }}</span>
+    <span class="meta__author">by {{ video().user.name }}</span>
+  </div>
+</a>

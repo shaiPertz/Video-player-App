@@ -15,14 +15,14 @@ export class PexelsService {
   private readonly baseUrl = environment.pexelsApiBaseUrl;
 
   /** Popular videos — used as the default/empty-query list. */
-  getPopular(perPage = 15): Observable<PexelsResponse> {
-    const params = new HttpParams().set('per_page', perPage);
+  getPopular(perPage = 15, page = 1): Observable<PexelsResponse> {
+    const params = new HttpParams().set('per_page', perPage).set('page', page);
     return this.http.get<PexelsResponse>(`${this.baseUrl}/popular`, { params });
   }
 
   /** Search videos by keyword. */
-  search(query: string, perPage = 15): Observable<PexelsResponse> {
-    const params = new HttpParams().set('query', query).set('per_page', perPage);
+  search(query: string, perPage = 15, page = 1): Observable<PexelsResponse> {
+    const params = new HttpParams().set('query', query).set('per_page', perPage).set('page', page);
     return this.http.get<PexelsResponse>(`${this.baseUrl}/search`, { params });
   }
 
